@@ -15,16 +15,12 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', [App\Http\Controllers\ContactController::class, 'index']);
-Route::post('/store', [App\Http\Controllers\ContactController::class, 'store'])->name('contacts.store');
-Route::get('/dashboard', [App\Http\Controllers\ContactController::class, 'dashboard'])->name('contacts.dashboard');
-Route::get('/create', [App\Http\Controllers\ContactController::class, 'create'])->name('contacts.create');
-Route::get('/edit/{id}', [App\Http\Controllers\ContactController::class, 'edit'])->name('contacts.edit');
-Route::put('/update/{id}', [App\Http\Controllers\ContactController::class, 'update'])->name('contacts.update');
-Route::delete('/delete/{id}', [App\Http\Controllers\ContactController::class, 'destroy'])->name('contacts.delete');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [App\Http\Controllers\ContactController::class, 'dashboard'])->middleware(['auth', 'verified'])->name('dashboard');
+Route::post('/store', [App\Http\Controllers\ContactController::class, 'store'])->middleware(['auth', 'verified'])->name('contacts.store');
+Route::get('/create', [App\Http\Controllers\ContactController::class, 'create'])->middleware(['auth', 'verified'])->name('contacts.create');
+Route::get('/edit/{id}', [App\Http\Controllers\ContactController::class, 'edit'])->middleware(['auth', 'verified'])->name('contacts.edit');
+Route::put('/update/{id}', [App\Http\Controllers\ContactController::class, 'update'])->middleware(['auth', 'verified'])->name('contacts.update');
+Route::delete('/delete/{id}', [App\Http\Controllers\ContactController::class, 'destroy'])->middleware(['auth', 'verified'])->name('contacts.delete');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

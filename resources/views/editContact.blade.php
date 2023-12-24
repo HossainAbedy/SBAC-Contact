@@ -23,8 +23,7 @@
                             </ul>
                         </div>
                     @endif
-                
-                    <form id="myForm" action="{{ route('contacts.update', $id) }}" method="POST" enctype="multipart/form-data">
+                    <form id="myForm" action="{{ route('contacts.update', ['id' => $id]) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')            
                         <div class="border-b border-gray-900/10 pb-12">

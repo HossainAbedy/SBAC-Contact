@@ -17,6 +17,24 @@ class User extends Authenticatable
      *
      * @var array<int, string>
      */
+
+     // Other User model code
+
+    public function contact()
+    {
+        return $this->hasOne(Contact::class, 'empid', 'empid');
+    } 
+
+    public function isAdmin()
+    {
+        return $this->role === 'admin';
+    }
+
+    public function isBranchAdmin()
+    {
+        return $this->role === 'branch_admin';
+    }
+
     protected $fillable = [
         'name',
         'email',

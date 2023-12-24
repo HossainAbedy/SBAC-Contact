@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Contact;
 use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class ContactController extends Controller
 {
@@ -26,8 +27,22 @@ class ContactController extends Controller
 
     public function dashboard()
     {
-        $contacts = Contact::all();
-        return view('dashboard', compact('contacts'));
+        $user = Auth::user();
+        
+        if ($user->isAdmin()) {
+            $contacts = Contact::all();
+        } elseif ($user->isBranchAdmin()) {
+            $contacts = Contact::where('branch_code', $user->branch_code)->get();
+        } else {
+            $contacts = Contact::where('empid', $user->empid)->get();
+        }
+
+        $datas = [
+            'users' => User::all(),
+            'contacts' => $contacts,
+        ];
+
+        return view('dashboard', compact('datas'));
     }
 
     /**
@@ -80,7 +95,7 @@ class ContactController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Contact $contact)
+    public function update(Request $request, $id)
     {
         $request->validate([
             'branch' => 'required',
@@ -90,18 +105,30 @@ class ContactController extends Controller
             'designation' => 'required',
             'email' => 'required',
         ]);
-
-        $input = $request->all();    
-        $contact->update($request->all());
-       
-        return redirect('dashboard')->with('success','Contact updated successfully.');
+    
+        // Find the contact by ID
+        $contact = Contact::findOrFail($id);
+    
+        // Update the contact fields
+        $contact->branch = $request->input('branch');
+        $contact->branch_code = $request->input('branch_code');
+        $contact->name = $request->input('name');
+        $contact->empid = $request->input('empid');
+        $contact->designation = $request->input('designation');
+        $contact->email = $request->input('email');
+    
+        // Save the updated contact
+        $contact->save();
+    
+        return redirect('dashboard')->with('success', 'Contact updated successfully.');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Contact $contact)
+    public function destroy($id)
     {
+        $contact = Contact::findOrFail($id);
         $contact->delete();
 
         return redirect('dashboard')->with('success', 'Contact has been deleted successfully.');
